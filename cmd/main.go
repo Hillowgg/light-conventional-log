@@ -1,17 +1,11 @@
 package main
 
 import (
-    "fmt"
+    "os"
 
-    git2 "lightConventionalLog/internal/git"
+    "lightConventionalLog/internal/cli"
 )
 
 func main() {
-    git := git2.New()
-    tags := git.CreateChangeLogFrom("18.0.0-next.3")
-    fmt.Println(tags)
-    // for _, t := range tags {
-    //     fmt.Println(t)
-    // }
-    // fmt.Println(string(tags))
+    cli.ParseArguments(os.Args[1:]...)
 }

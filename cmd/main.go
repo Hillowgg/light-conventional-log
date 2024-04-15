@@ -8,6 +8,10 @@ import (
 
 func main() {
     git := git2.New()
-    tags := git.GetCommitFromToTags("0.109.0", "0.110.0")
-    fmt.Println(string(tags))
+    tags := git.CreateChangeLogFrom("18.0.0-next.3")
+    fmt.Println(tags)
+    // for _, t := range tags {
+    //     fmt.Println(t)
+    // }
+    // fmt.Println(string(tags))
 }

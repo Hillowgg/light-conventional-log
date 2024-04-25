@@ -46,6 +46,7 @@ func makeFullLogToFiles() {
         if err != nil {
             panic(err)
         }
+        fmt.Println("Log created in " + string(tag) + ".md")
     }
 }
 
@@ -64,6 +65,7 @@ func makeLogFromTagToFile(tag git.Tag, fileName string) {
     if err != nil {
         panic(err)
     }
+    fmt.Println("Log created in " + fileName)
 }
 func printTags() {
     tags := git.PrettyTags()

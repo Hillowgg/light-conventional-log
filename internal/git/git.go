@@ -70,12 +70,21 @@ func GetCommitsFromToTags(fromTag Tag, toTag Tag) []byte {
     return out
 }
 
-func CreateFullChangeLog() string {
-    panic("Not implemented")
+func CreateFullChangeLog() map[Tag]string {
+    tags := PrettyTags()
+    if len(tags) == 0 {
+        panic("No tags found")
+    }
+    res := make(map[Tag]string, len(tags))
+    res[tags[0]] = CreateChangeLogFrom(tags[0])
+    for i := 1; i < len(tags); i++ {
+        commit := parseCommits(GetCommitsFromToTags(tags[i], tags[i-1]))
+        res[tags[i]] = string(commit)
+    }
+    return res
 }
 
-func CreateChangeLogFrom(tag Tag) string {
-    commitsText := GetCommitsFromTag(tag)
+func parseCommits(commitsText []byte) string {
     commits := bytes.Split(commitsText, []byte("\n"))
     res := make(map[string]map[string][]string, 0)
     for _, comm := range commits {
@@ -96,4 +105,9 @@ func CreateChangeLogFrom(tag Tag) string {
         }
     }
     return ret
+}
+
+func CreateChangeLogFrom(tag Tag) string {
+    commitsText := GetCommitsFromTag(tag)
+    return parseCommits(commitsText)
 }

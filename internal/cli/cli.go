@@ -8,7 +8,6 @@ import (
 )
 
 // lcl full
-// lcl full file.txt
 // lcl from tag
 // lcl from tag file.txt
 func ParseArguments(args ...string) {
@@ -17,11 +16,8 @@ func ParseArguments(args ...string) {
         return
     }
     if args[0] == "full" {
-        if len(args) > 1 {
-            makeFullLogToFile(args[1])
-        } else {
-            makeFullLog()
-        }
+        makeFullLogToFiles()
+
     } else if args[0] == "from" {
         if len(args) == 2 {
             makeLogFromTag(git.Tag(args[1]))
@@ -39,15 +35,17 @@ func makeFullLog() {
     log := git.CreateFullChangeLog()
     fmt.Println(log)
 }
-func makeFullLogToFile(fileName string) {
-    file, err := os.Create(fileName)
-    if err != nil {
-        panic(err)
-    }
-    log := git.CreateFullChangeLog()
-    _, err = file.WriteString(log)
-    if err != nil {
-        panic(err)
+func makeFullLogToFiles() {
+    logs := git.CreateFullChangeLog()
+    for tag, log := range logs {
+        file, err := os.Create(string(tag) + ".md")
+        if err != nil {
+            panic(err)
+        }
+        _, err = file.WriteString(log)
+        if err != nil {
+            panic(err)
+        }
     }
 }
 

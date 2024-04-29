@@ -8,9 +8,13 @@ import (
     "lightConventionalLog/internal/conventional"
 )
 
-var tagRegExp = regexp.MustCompile("tag: \\S+\\)")
+var tagRegExp = regexp.MustCompile("tag: \\S+\\\\")
+var dateRegExp = regexp.MustCompile("\\\\.+")
 
-type Tag string
+type Tag struct {
+    tag  string
+    date string
+}
 
 func getAllTags() []byte {
     cmd := exec.Command(
@@ -18,7 +22,7 @@ func getAllTags() []byte {
         "log",
         "--tags",
         "--simplify-by-decoration",
-        "--pretty=\"%d\"",
+        "--pretty=\"%D\\\\%ci\"",
     )
     out, err := cmd.Output()
     if err != nil {
@@ -32,12 +36,12 @@ func PrettyTags() []Tag {
     tags := bytes.Split(tagsText, []byte("\n"))
     res := make([]Tag, 0, len(tags))
     for _, t := range tags {
-        tag := tagRegExp.Find(t)
+        tag := tagRegExp.Find(t)[:len(t)-1]
+        date := dateRegExp.Find(t)[1:]
         if len(tag) == 0 {
             continue
         }
-        res = append(res, Tag(tag[5:len(tag)-1]))
-
+        res = append(res, Tag{string(tag), string(date)})
     }
     return res
 }
@@ -47,7 +51,7 @@ func GetCommitsFromTag(tag Tag) []byte {
         "git",
         "log",
         "--oneline",
-        string(tag)+"..",
+        tag.tag+"..",
     )
     out, err := cmd.Output()
     if err != nil {
@@ -61,7 +65,7 @@ func GetCommitsFromToTags(fromTag Tag, toTag Tag) []byte {
         "git",
         "log",
         "--oneline",
-        string(fromTag)+".."+string(toTag),
+        fromTag.tag+".."+toTag.tag,
     )
     out, err := cmd.Output()
     if err != nil {

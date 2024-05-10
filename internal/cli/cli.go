@@ -4,6 +4,7 @@ import (
     "fmt"
     "os"
 
+    "lightConventionalLog/internal/formatter"
     "lightConventionalLog/internal/git"
 )
 
@@ -20,9 +21,9 @@ func ParseArguments(args ...string) {
 
     } else if args[0] == "from" {
         if len(args) == 2 {
-            makeLogFromTag(git.Tag(args[1]))
+            makeLogFromTag(args[1])
         } else if len(args) == 3 {
-            makeLogFromTagToFile(git.Tag(args[1]), args[2])
+            makeLogFromTagToFile(args[1], args[2])
         }
     } else if args[0] == "tags" {
         printTags()
@@ -32,13 +33,13 @@ func ParseArguments(args ...string) {
 
 }
 func makeFullLog() {
-    log := git.CreateFullChangeLog()
+    log := formatter.CreateFullChangeLog()
     fmt.Println(log)
 }
 func makeFullLogToFiles() {
-    logs := git.CreateFullChangeLog()
+    logs := formatter.CreateFullChangeLog()
     for tag, log := range logs {
-        file, err := os.Create(string(tag) + ".md")
+        file, err := os.Create(tag.Tag + ".md")
         if err != nil {
             panic(err)
         }
@@ -46,21 +47,21 @@ func makeFullLogToFiles() {
         if err != nil {
             panic(err)
         }
-        fmt.Println("Log created in " + string(tag) + ".md")
+        fmt.Println("Log created in " + tag.Tag + ".md")
     }
 }
 
-func makeLogFromTag(tag git.Tag) {
-    log := git.CreateChangeLogFrom(tag)
+func makeLogFromTag(tag string) {
+    log := formatter.CreateChangeLogFrom(tag)
     fmt.Println(log)
 }
 
-func makeLogFromTagToFile(tag git.Tag, fileName string) {
+func makeLogFromTagToFile(tag string, fileName string) {
     file, err := os.Create(fileName)
     if err != nil {
         panic(err)
     }
-    log := git.CreateChangeLogFrom(tag)
+    log := formatter.CreateChangeLogFrom(tag)
     _, err = file.WriteString(log)
     if err != nil {
         panic(err)
@@ -68,7 +69,7 @@ func makeLogFromTagToFile(tag git.Tag, fileName string) {
     fmt.Println("Log created in " + fileName)
 }
 func printTags() {
-    tags := git.PrettyTags()
+    tags := git.GetTags()
     for _, t := range tags {
         fmt.Println(t)
     }

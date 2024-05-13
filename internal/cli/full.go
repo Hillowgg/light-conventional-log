@@ -13,6 +13,7 @@ var fullCmd = &cobra.Command{
     Short: "create full log",
     Run: func(cmd *cobra.Command, args []string) {
         logs := formatter.CreateFullChangeLog()
+
         for tag, log := range logs {
             file, err := os.Create(tag.Tag + ".md")
             if err != nil {
@@ -29,4 +30,5 @@ var fullCmd = &cobra.Command{
 
 func init() {
     rootCmd.AddCommand(fullCmd)
+    fromCmd.Flags().StringP("file", "f", "", "file to save log")
 }

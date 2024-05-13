@@ -34,12 +34,13 @@ func GetTags() []Tag {
     tags := bytes.Split(tagsText, []byte("\n"))
     res := make([]Tag, 0, len(tags))
     for _, t := range tags {
-        tag := tagRegExp.Find(t)[:len(t)-1]
-        date := dateRegExp.Find(t)[1:]
+
+        tag := tagRegExp.Find(t)
+        date := dateRegExp.Find(t)
         if len(tag) == 0 {
             continue
         }
-        res = append(res, Tag{string(tag), string(date)})
+        res = append(res, Tag{string(tag[5 : len(tag)-2]), string(date[2 : len(date)-1])})
     }
     return res
 }

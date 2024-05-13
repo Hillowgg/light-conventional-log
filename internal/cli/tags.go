@@ -13,7 +13,7 @@ var tagsCmd = &cobra.Command{
     Run: func(cmd *cobra.Command, args []string) {
         tags := git.GetTags()
         for _, t := range tags {
-            fmt.Println(t)
+            fmt.Println(t.Tag)
         }
     },
 }

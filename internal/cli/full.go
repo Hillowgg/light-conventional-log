@@ -30,5 +30,5 @@ var fullCmd = &cobra.Command{
 
 func init() {
     rootCmd.AddCommand(fullCmd)
-    fromCmd.Flags().StringP("file", "f", "", "file to save log")
+    fullCmd.Flags().StringP("file", "f", "", "file to save log")
 }

@@ -37,7 +37,7 @@ func ParseCommits(commitsText []byte) string {
         for typeName, t := range scope {
             ret += "- ## " + typeName + "\n"
             for _, title := range t {
-                ret += "- - " + title + "\n"
+                ret += "- " + title + "\n"
             }
         }
     }

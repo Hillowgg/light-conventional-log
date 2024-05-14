@@ -34,7 +34,7 @@ var updateCmd = &cobra.Command{
 
         if fileName != "" {
             file, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-            _, err = file.WriteString("\n" + tag)
+            _, err = file.WriteString("\n# " + tag + "\n")
             _, err = file.WriteString(log)
             if err != nil {
                 panic(err)

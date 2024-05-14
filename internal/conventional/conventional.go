@@ -19,9 +19,14 @@ func ParseConventional(commit []byte) ConventionalCommit {
     conv := ConventionalCommit{}
     if len(scope) == 0 {
         conv.Type = string(type_)
+        if len(conv.Type) > 1 {
+            conv.Type = conv.Type[:len(conv.Type)-1]
+        }
+
         conv.Scope = "general"
     } else {
-        t, _ := bytes.CutSuffix(type_, scope)
+        suff := string(scope) + ":"
+        t, _ := bytes.CutSuffix(type_, []byte(suff))
         conv.Type = string(t)
         conv.Scope = string(scope[1 : len(scope)-1])
     }

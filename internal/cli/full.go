@@ -12,7 +12,25 @@ var fullCmd = &cobra.Command{
     Use:   "full",
     Short: "create full log",
     Run: func(cmd *cobra.Command, args []string) {
-        logs := formatter.CreateFullChangeLog()
+        ns, _ := cmd.Flags().GetBool("no-scopes")
+
+        logs := formatter.CreateFullChangeLog(!ns)
+        one, _ := cmd.Flags().GetString("one-file")
+        if one != "" {
+            file, err := os.Create(one)
+            if err != nil {
+                panic(err)
+            }
+            for tag, log := range logs {
+                _, err = file.WriteString("# " + tag.Tag + "\n")
+                _, err = file.WriteString(log)
+                if err != nil {
+                    panic(err)
+                }
+            }
+            fmt.Println("Log created in " + one)
+            return
+        }
 
         for tag, log := range logs {
             file, err := os.Create(tag.Tag + ".md")
@@ -30,5 +48,6 @@ var fullCmd = &cobra.Command{
 
 func init() {
     rootCmd.AddCommand(fullCmd)
-    fullCmd.Flags().StringP("file", "f", "", "file to save log")
+    fullCmd.Flags().StringP("one-file", "o", "", "create one file with all logs")
+    fullCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
 }

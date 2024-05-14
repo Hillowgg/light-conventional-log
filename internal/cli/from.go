@@ -17,7 +17,17 @@ var fromCmd = &cobra.Command{
         if err != nil {
             panic(err)
         }
-        log := formatter.CreateChangeLogFrom(args[0], ns)
+
+        to, _ := cmd.Flags().GetString("to")
+        var log string
+        if to != "" {
+            log = formatter.CreateChangeLogFromTo(args[0], to, !ns)
+
+        } else {
+
+            log = formatter.CreateChangeLogFrom(args[0], !ns)
+        }
+
         fileName, err := cmd.Flags().GetString("file")
         if err != nil {
             panic(err)
@@ -40,4 +50,5 @@ func init() {
     fromCmd.Flags().StringP("file", "f", "", "file to save log")
     // flag -n present
     fromCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
+    fromCmd.Flags().StringP("to", "t", "", "create log from tag to tag")
 }

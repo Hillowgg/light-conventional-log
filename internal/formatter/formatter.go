@@ -7,15 +7,15 @@ import (
     "lightConventionalLog/internal/git"
 )
 
-func CreateFullChangeLog() map[git.Tag]string {
+func CreateFullChangeLog(scopes bool) map[git.Tag]string {
     tags := git.GetTags()
     if len(tags) == 0 {
         panic("No tags found")
     }
     res := make(map[git.Tag]string, len(tags))
-    res[tags[0]] = CreateChangeLogFrom(tags[0].Tag, true)
-    for i := 1; i < len(tags); i++ {
-        commit := ParseCommits(git.GetCommitsFromToTags(tags[i], tags[i-1]))
+    res[tags[0]] = CreateChangeLogFrom(tags[0].Tag, scopes)
+    for i := len(tags) - 1; i > 0; i-- {
+        commit := ParseCommits(git.GetCommitsFromToTags(tags[i].Tag, tags[i-1].Tag))
         res[tags[i]] = string(commit)
     }
     return res
@@ -70,4 +70,16 @@ func CreateChangeLogFrom(tag string, scopes bool) string {
         return ParseCommits(commitsText)
     }
     return ParseCommitsWithoutScopes(commitsText)
+}
+func CreateChangeLogFromTo(fromTag string, toTag string, scopes bool) string {
+    commitsText := git.GetCommitsFromToTags(fromTag, toTag)
+    if scopes {
+        return ParseCommits(commitsText)
+    }
+    return ParseCommitsWithoutScopes(commitsText)
+}
+
+func LastChangeLog(scopes bool) (string, string) {
+    tags := git.GetTags()
+    return CreateChangeLogFrom(tags[0].Tag, scopes), tags[0].Tag
 }

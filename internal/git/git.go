@@ -59,12 +59,12 @@ func GetCommitsFromTag(tag string) []byte {
     return out
 }
 
-func GetCommitsFromToTags(fromTag Tag, toTag Tag) []byte {
+func GetCommitsFromToTags(fromTag string, toTag string) []byte {
     cmd := exec.Command(
         "git",
         "log",
         "--oneline",
-        fromTag.Tag+".."+toTag.Tag,
+        fromTag+".."+toTag,
     )
     out, err := cmd.Output()
     if err != nil {

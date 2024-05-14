@@ -7,16 +7,16 @@ import (
 
 var commitTypeRegExp = regexp.MustCompile("(feat|fix|docs|style|refactor|perf|test|chore|build|ci)(\\(.+\\))?:")
 
-type ConventionalCommit struct {
+type Commit struct {
     Type  string
     Scope string // if not, then general
     Title string
 }
 
-func ParseConventional(commit []byte) ConventionalCommit {
+func ParseConventional(commit []byte) Commit {
     type_ := commitTypeRegExp.Find(commit)
     scope := regexp.MustCompile("\\(.+\\)").Find(type_)
-    conv := ConventionalCommit{}
+    conv := Commit{}
     if len(scope) == 0 {
         conv.Type = string(type_)
         if len(conv.Type) > 1 {

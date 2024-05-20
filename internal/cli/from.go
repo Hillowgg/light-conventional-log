@@ -9,9 +9,10 @@ import (
 )
 
 var fromCmd = &cobra.Command{
-    Use:   "from",
-    Short: "create changelog from tag",
-    Args:  cobra.ExactArgs(1),
+    Use:     "from",
+    Short:   "create changelog from tag",
+    Args:    cobra.ExactArgs(1),
+    PreRunE: checkGit,
     Run: func(cmd *cobra.Command, args []string) {
         ns, err := cmd.Flags().GetBool("no-scopes")
         if err != nil {

@@ -11,8 +11,9 @@ import (
 )
 
 var updateCmd = &cobra.Command{
-    Use:   "update",
-    Short: "update latest tag",
+    Use:     "update",
+    Short:   "update latest tag",
+    PreRunE: checkGit,
     Run: func(cmd *cobra.Command, args []string) {
         fileName, _ := cmd.Flags().GetString("file")
         ns, _ := cmd.Flags().GetBool("no-scopes")
@@ -30,6 +31,10 @@ var updateCmd = &cobra.Command{
             file, _ = os.Open(".tmp-lcl.md")
             log_, _ := io.ReadAll(file)
             log = string(log_)
+            err := os.Remove(".tmp-lcl.md")
+            if err != nil {
+                return
+            }
         }
 
         if fileName != "" {

@@ -9,8 +9,9 @@ import (
 )
 
 var fullCmd = &cobra.Command{
-    Use:   "full",
-    Short: "create full log",
+    Use:     "full",
+    Short:   "create full log",
+    PreRunE: checkGit,
     Run: func(cmd *cobra.Command, args []string) {
         ns, _ := cmd.Flags().GetBool("no-scopes")
 

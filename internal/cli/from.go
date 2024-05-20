@@ -9,7 +9,7 @@ import (
 )
 
 var fromCmd = &cobra.Command{
-    Use:     "from",
+    Use:     "from <tag>",
     Short:   "create changelog from tag",
     Args:    cobra.ExactArgs(1),
     PreRunE: checkGit,

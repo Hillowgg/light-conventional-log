@@ -10,6 +10,7 @@ import (
 var tagsCmd = &cobra.Command{
     Use:     "tags",
     Short:   "list all tags",
+    Args:    cobra.NoArgs,
     PreRunE: checkGit,
     Run: func(cmd *cobra.Command, args []string) {
         tags := git.GetTags()

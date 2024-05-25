@@ -16,9 +16,10 @@ type ConfigData struct {
 
 func getFile() (*os.File, error) {
     if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
-        return os.OpenFile("~/.lcl.config", os.O_CREATE|os.O_RDONLY, 0666)
+        home, _ := os.UserHomeDir()
+        return os.OpenFile(home+"/.lcl.config", os.O_CREATE|os.O_RDWR, 0644)
     }
-    return os.OpenFile("~\\AppData\\Roaming\\lcl.config", os.O_CREATE|os.O_RDONLY, 0666)
+    return os.OpenFile("~\\AppData\\Roaming\\lcl.config", os.O_CREATE|os.O_RDWR, 0644)
 }
 
 func LoadConfig() {
@@ -35,7 +36,7 @@ func LoadConfig() {
     }
     err = json.Unmarshal(data, &cfg)
     if err != nil {
-        data, _ = json.Marshal(cfg)
+        data, _ = json.MarshalIndent(cfg, "", "  ")
         file.Write(data)
         Config = ConfigData{}
     }

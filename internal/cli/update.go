@@ -19,7 +19,13 @@ var updateCmd = &cobra.Command{
     Run: func(cmd *cobra.Command, args []string) {
         fileName, _ := cmd.Flags().GetString("file")
         ns, _ := cmd.Flags().GetBool("no-scopes")
+        if config.Config.IncludeScopes {
+            ns = !ns
+        }
         interactive, _ := cmd.Flags().GetBool("interactive")
+        if config.Config.Interactive {
+            interactive = !interactive
+        }
         cfg := repo.Update{}
         cfg.IncludeScopes = !ns
         cfg.Dir, _ = cmd.Flags().GetString("repo")
@@ -60,7 +66,7 @@ func init() {
 
     updateCmd.Flags().StringP("repo", "r", "", "repository path")
     updateCmd.Flags().StringP("file", "f", "", "file to save log")
-    updateCmd.Flags().BoolP("no-scopes", "n", config.Config.IncludeScopes, "exclude scopes")
-    updateCmd.Flags().BoolP("interactive", "i", config.Config.Interactive, "interactive mode")
+    updateCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
+    updateCmd.Flags().BoolP("interactive", "i", false, "interactive mode")
 
 }

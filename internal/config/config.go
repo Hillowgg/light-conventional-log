@@ -12,6 +12,8 @@ var Config ConfigData
 type ConfigData struct {
     IncludeScopes bool `json:"defaultIncludeScopes"`
     Interactive   bool `json:"defaultInteractive"`
+    Dates         bool `json:"defaultDates"`
+    ReverseTags   bool `json:"defaultReverseTags"`
 }
 
 func getFile() (*os.File, error) {

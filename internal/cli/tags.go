@@ -5,6 +5,7 @@ import (
     "slices"
 
     "github.com/spf13/cobra"
+    "lightConventionalLog/internal/config"
     "lightConventionalLog/internal/git"
     "lightConventionalLog/internal/repo"
 )
@@ -20,7 +21,13 @@ var tagsCmd = &cobra.Command{
         cfg.Dir, _ = cmd.Flags().GetString("repo")
         tags := git.GetTags(cfg)
         rev, _ := cmd.Flags().GetBool("reverse")
+        if config.Config.ReverseTags {
+            rev = !rev
+        }
         date, _ := cmd.Flags().GetBool("date")
+        if config.Config.Dates {
+            date = !date
+        }
         if rev {
             slices.Reverse(tags)
         }

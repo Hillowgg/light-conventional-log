@@ -20,6 +20,9 @@ var fromCmd = &cobra.Command{
         cfg := repo.From{}
         cfg.From = args[0]
         cfg.IncludeScopes = !ns
+        if config.Config.IncludeScopes {
+            cfg.IncludeScopes = !cfg.IncludeScopes
+        }
         cfg.To, _ = cmd.Flags().GetString("to")
         cfg.Dir, _ = cmd.Flags().GetString("repo")
         log := formatter.CreateChangeLogFrom(cfg)
@@ -45,6 +48,6 @@ func init() {
     fromCmd.Flags().StringP("file", "f", "", "file to save log")
     // flag -n present
     fromCmd.Flags().StringP("repo", "r", "", "repository path")
-    fromCmd.Flags().BoolP("no-scopes", "n", config.Config.IncludeScopes, "exclude scopes")
+    fromCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
     fromCmd.Flags().StringP("to", "t", "", "create log from tag to tag")
 }

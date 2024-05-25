@@ -18,6 +18,9 @@ var fullCmd = &cobra.Command{
         ns, _ := cmd.Flags().GetBool("no-scopes")
         cfg := repo.Full{}
         cfg.IncludeScopes = !ns
+        if config.Config.IncludeScopes {
+            cfg.IncludeScopes = !cfg.IncludeScopes
+        }
         cfg.Dir, _ = cmd.Flags().GetString("repo")
         logs := formatter.CreateFullChangeLog(cfg)
         one, _ := cmd.Flags().GetString("one-file")
@@ -55,5 +58,5 @@ func init() {
     rootCmd.AddCommand(fullCmd)
     fullCmd.Flags().StringP("one-file", "o", "", "create one file with all logs")
     fullCmd.Flags().StringP("repo", "r", "", "repository path")
-    fullCmd.Flags().BoolP("no-scopes", "n", config.Config.IncludeScopes, "exclude scopes")
+    fullCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
 }

@@ -14,7 +14,7 @@ type Tag struct {
     Date string
 }
 
-func getAllTags() []byte {
+func getAllTags(dir string) []byte {
     cmd := exec.Command(
         "git",
         "log",
@@ -22,6 +22,7 @@ func getAllTags() []byte {
         "--simplify-by-decoration",
         "--pretty=\"%D\\\\%ci\"",
     )
+    cmd.Dir = dir
     out, err := cmd.Output()
     if err != nil {
         panic(err)
@@ -29,8 +30,12 @@ func getAllTags() []byte {
     return out
 }
 
-func GetTags() []Tag {
-    tagsText := getAllTags()
+type Tags interface {
+    GetDir() string
+}
+
+func GetTags(cfg Tags) []Tag {
+    tagsText := getAllTags(cfg.GetDir())
     tags := bytes.Split(tagsText, []byte("\n"))
     res := make([]Tag, 0, len(tags))
     for _, t := range tags {
@@ -45,13 +50,14 @@ func GetTags() []Tag {
     return res
 }
 
-func GetCommitsFromTag(tag string) []byte {
+func GetCommitsFromTag(tag From) []byte {
     cmd := exec.Command(
         "git",
         "log",
         "--oneline",
-        tag+"..",
+        tag.GetFrom()+"..",
     )
+
     out, err := cmd.Output()
     if err != nil {
         panic(err)
@@ -59,13 +65,17 @@ func GetCommitsFromTag(tag string) []byte {
     return out
 }
 
-func GetCommitsFromToTags(fromTag string, toTag string) []byte {
+func GetCommitsFromToTags(cfg FromToDir) []byte {
     cmd := exec.Command(
         "git",
         "log",
         "--oneline",
-        fromTag+".."+toTag,
+        cfg.GetFrom()+".."+cfg.GetTo(),
     )
+    if d := cfg.GetDir(); d != "" {
+        cmd.Dir = d
+    }
+
     out, err := cmd.Output()
     if err != nil {
         panic(err)

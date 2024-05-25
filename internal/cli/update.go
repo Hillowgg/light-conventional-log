@@ -8,6 +8,7 @@ import (
 
     "github.com/spf13/cobra"
     "lightConventionalLog/internal/formatter"
+    "lightConventionalLog/internal/repo"
 )
 
 var updateCmd = &cobra.Command{
@@ -18,8 +19,10 @@ var updateCmd = &cobra.Command{
         fileName, _ := cmd.Flags().GetString("file")
         ns, _ := cmd.Flags().GetBool("no-scopes")
         interactive, _ := cmd.Flags().GetBool("interactive")
-
-        log, tag := formatter.LastChangeLog(!ns)
+        cfg := repo.Update{}
+        cfg.IncludeScopes = !ns
+        cfg.Dir, _ = cmd.Flags().GetString("repo")
+        log, tag := formatter.LastChangeLog(cfg)
         if interactive {
             file, _ := os.Create(".tmp-lcl.md")
             _, _ = file.WriteString(log)
@@ -53,6 +56,8 @@ var updateCmd = &cobra.Command{
 
 func init() {
     rootCmd.AddCommand(updateCmd)
+
+    fromCmd.Flags().StringP("repo", "r", "", "repository path")
     updateCmd.Flags().StringP("file", "f", "", "file to save log")
     updateCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
     updateCmd.Flags().BoolP("interactive", "i", false, "interactive mode")

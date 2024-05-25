@@ -6,6 +6,7 @@ import (
 
     "github.com/spf13/cobra"
     "lightConventionalLog/internal/formatter"
+    "lightConventionalLog/internal/repo"
 )
 
 var fullCmd = &cobra.Command{
@@ -14,8 +15,10 @@ var fullCmd = &cobra.Command{
     PreRunE: checkGit,
     Run: func(cmd *cobra.Command, args []string) {
         ns, _ := cmd.Flags().GetBool("no-scopes")
-
-        logs := formatter.CreateFullChangeLog(!ns)
+        cfg := repo.Full{}
+        cfg.IncludeScopes = !ns
+        cfg.Dir, _ = cmd.Flags().GetString("repo")
+        logs := formatter.CreateFullChangeLog(cfg)
         one, _ := cmd.Flags().GetString("one-file")
         if one != "" {
             file, err := os.Create(one)
@@ -50,5 +53,6 @@ var fullCmd = &cobra.Command{
 func init() {
     rootCmd.AddCommand(fullCmd)
     fullCmd.Flags().StringP("one-file", "o", "", "create one file with all logs")
+    fromCmd.Flags().StringP("repo", "r", "", "repository path")
     fullCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
 }

@@ -22,7 +22,6 @@ func ParseConventional(commit []byte) Commit {
         if len(conv.Type) > 1 {
             conv.Type = conv.Type[:len(conv.Type)-1]
         }
-
         conv.Scope = "general"
     } else {
         suff := string(scope) + ":"
@@ -33,5 +32,8 @@ func ParseConventional(commit []byte) Commit {
     pref := regexp.MustCompile(".+(feat|fix|docs|style|refactor|perf|test|chore|build|ci)(\\(.+\\))?:")
     title, _ := bytes.CutPrefix(commit, pref.Find(commit))
     conv.Title = string(title)
+    if len(conv.Title) == 0 {
+        conv.Title = "no title"
+    }
     return conv
 }

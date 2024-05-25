@@ -6,6 +6,7 @@ import (
 
     "github.com/spf13/cobra"
     "lightConventionalLog/internal/formatter"
+    "lightConventionalLog/internal/repo"
 )
 
 var fromCmd = &cobra.Command{
@@ -14,21 +15,13 @@ var fromCmd = &cobra.Command{
     Args:    cobra.ExactArgs(1),
     PreRunE: checkGit,
     Run: func(cmd *cobra.Command, args []string) {
-        ns, err := cmd.Flags().GetBool("no-scopes")
-        if err != nil {
-            panic(err)
-        }
-
-        to, _ := cmd.Flags().GetString("to")
-        var log string
-        if to != "" {
-            log = formatter.CreateChangeLogFromTo(args[0], to, !ns)
-
-        } else {
-
-            log = formatter.CreateChangeLogFrom(args[0], !ns)
-        }
-
+        ns, _ := cmd.Flags().GetBool("no-scopes")
+        cfg := repo.From{}
+        cfg.From = args[0]
+        cfg.IncludeScopes = !ns
+        cfg.To, _ = cmd.Flags().GetString("to")
+        cfg.Dir, _ = cmd.Flags().GetString("repo")
+        log := formatter.CreateChangeLogFrom(cfg)
         fileName, err := cmd.Flags().GetString("file")
         if err != nil {
             panic(err)
@@ -50,6 +43,7 @@ func init() {
     rootCmd.AddCommand(fromCmd)
     fromCmd.Flags().StringP("file", "f", "", "file to save log")
     // flag -n present
+    fromCmd.Flags().StringP("repo", "r", "", "repository path")
     fromCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
     fromCmd.Flags().StringP("to", "t", "", "create log from tag to tag")
 }

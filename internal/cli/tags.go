@@ -2,9 +2,11 @@ package cli
 
 import (
     "fmt"
+    "slices"
 
     "github.com/spf13/cobra"
     "lightConventionalLog/internal/git"
+    "lightConventionalLog/internal/repo"
 )
 
 var tagsCmd = &cobra.Command{
@@ -13,13 +15,28 @@ var tagsCmd = &cobra.Command{
     Args:    cobra.NoArgs,
     PreRunE: checkGit,
     Run: func(cmd *cobra.Command, args []string) {
-        tags := git.GetTags()
+
+        cfg := repo.Tags{}
+        cfg.Dir, _ = cmd.Flags().GetString("repo")
+        tags := git.GetTags(cfg)
+        rev, _ := cmd.Flags().GetBool("reverse")
+        date, _ := cmd.Flags().GetBool("date")
+        if rev {
+            slices.Reverse(tags)
+        }
         for _, t := range tags {
-            fmt.Println(t.Tag)
+            if date {
+                fmt.Println(t.Tag + " " + t.Date)
+            } else {
+                fmt.Println(t.Tag)
+            }
         }
     },
 }
 
 func init() {
+    fromCmd.Flags().BoolP("date", "d", false, "show date")
+    fromCmd.Flags().StringP("repo", "r", "", "repository path")
+    fromCmd.Flags().BoolP("reverse", "v", false, "reverse order")
     rootCmd.AddCommand(tagsCmd)
 }

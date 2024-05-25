@@ -5,18 +5,27 @@ import (
 
     "lightConventionalLog/internal/conventional"
     "lightConventionalLog/internal/git"
+    "lightConventionalLog/internal/repo"
 )
 
-func CreateFullChangeLog(scopes bool) map[git.Tag]string {
-    tags := git.GetTags()
+func CreateFullChangeLog(cfg repo.Full) map[git.Tag]string {
+    tags := git.GetTags(repo.Tags{Dir: cfg.GetDir()})
     if len(tags) == 0 {
         panic("No tags found")
     }
     res := make(map[git.Tag]string, len(tags))
-    res[tags[0]] = CreateChangeLogFrom(tags[0].Tag, scopes)
+    from := repo.From{}
+    from.From = tags[0].Tag
+    from.IncludeScopes = cfg.GetIncludeScopes()
+    res[tags[0]] = CreateChangeLogFrom(from)
+
     for i := len(tags) - 1; i > 0; i-- {
-        commit := ParseCommits(git.GetCommitsFromToTags(tags[i].Tag, tags[i-1].Tag))
-        res[tags[i]] = string(commit)
+        c := repo.From{}
+        c.From = tags[i].Tag
+        c.To = tags[i-1].Tag
+        c.Dir = cfg.GetDir()
+        commit := ParseCommits(git.GetCommitsFromToTags(c))
+        res[tags[i]] = commit
     }
     return res
 }
@@ -64,22 +73,24 @@ func ParseCommitsWithoutScopes(commitsText []byte) string {
     return ret
 }
 
-func CreateChangeLogFrom(tag string, scopes bool) string {
-    commitsText := git.GetCommitsFromTag(tag)
-    if scopes {
-        return ParseCommits(commitsText)
-    }
-    return ParseCommitsWithoutScopes(commitsText)
+type From interface {
+    git.FromToDir
+    GetIncludeScopes() bool
 }
-func CreateChangeLogFromTo(fromTag string, toTag string, scopes bool) string {
-    commitsText := git.GetCommitsFromToTags(fromTag, toTag)
-    if scopes {
+
+func CreateChangeLogFrom(cfg From) string {
+    var commitsText []byte
+    commitsText = git.GetCommitsFromToTags(cfg)
+    if cfg.GetIncludeScopes() {
         return ParseCommits(commitsText)
     }
     return ParseCommitsWithoutScopes(commitsText)
 }
 
-func LastChangeLog(scopes bool) (string, string) {
-    tags := git.GetTags()
-    return CreateChangeLogFrom(tags[0].Tag, scopes), tags[0].Tag
+func LastChangeLog(cfg repo.Update) (string, string) {
+    tags := git.GetTags(repo.Tags{Dir: cfg.GetDir()})
+    c := repo.From{}
+    c.Dir = cfg.GetDir()
+    c.IncludeScopes = cfg.IncludeScopes
+    return CreateChangeLogFrom(c), tags[0].Tag
 }

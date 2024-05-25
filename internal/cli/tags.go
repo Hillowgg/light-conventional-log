@@ -35,8 +35,8 @@ var tagsCmd = &cobra.Command{
 }
 
 func init() {
-    fromCmd.Flags().BoolP("date", "d", false, "show date")
-    fromCmd.Flags().StringP("repo", "r", "", "repository path")
-    fromCmd.Flags().BoolP("reverse", "v", false, "reverse order")
+    tagsCmd.Flags().BoolP("date", "d", false, "show date")
+    tagsCmd.Flags().StringP("repo", "r", "", "repository path")
+    tagsCmd.Flags().BoolP("reverse", "v", false, "reverse order")
     rootCmd.AddCommand(tagsCmd)
 }

@@ -54,6 +54,6 @@ var fullCmd = &cobra.Command{
 func init() {
     rootCmd.AddCommand(fullCmd)
     fullCmd.Flags().StringP("one-file", "o", "", "create one file with all logs")
-    fromCmd.Flags().StringP("repo", "r", "", "repository path")
+    fullCmd.Flags().StringP("repo", "r", "", "repository path")
     fullCmd.Flags().BoolP("no-scopes", "n", config.Config.IncludeScopes, "exclude scopes")
 }

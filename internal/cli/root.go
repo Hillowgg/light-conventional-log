@@ -5,6 +5,7 @@ import (
     "os"
 
     "github.com/spf13/cobra"
+    "lightConventionalLog/internal/config"
 )
 
 var rootCmd = &cobra.Command{
@@ -14,6 +15,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
+    config.LoadConfig()
     if err := rootCmd.Execute(); err != nil {
         fmt.Fprintln(os.Stderr, err)
         os.Exit(1)

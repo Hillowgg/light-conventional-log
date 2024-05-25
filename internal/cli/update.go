@@ -7,6 +7,7 @@ import (
     "os/exec"
 
     "github.com/spf13/cobra"
+    "lightConventionalLog/internal/config"
     "lightConventionalLog/internal/formatter"
     "lightConventionalLog/internal/repo"
 )
@@ -59,7 +60,7 @@ func init() {
 
     fromCmd.Flags().StringP("repo", "r", "", "repository path")
     updateCmd.Flags().StringP("file", "f", "", "file to save log")
-    updateCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
-    updateCmd.Flags().BoolP("interactive", "i", false, "interactive mode")
+    updateCmd.Flags().BoolP("no-scopes", "n", config.Config.IncludeScopes, "exclude scopes")
+    updateCmd.Flags().BoolP("interactive", "i", config.Config.Interactive, "interactive mode")
 
 }

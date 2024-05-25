@@ -5,6 +5,7 @@ import (
     "os"
 
     "github.com/spf13/cobra"
+    "lightConventionalLog/internal/config"
     "lightConventionalLog/internal/formatter"
     "lightConventionalLog/internal/repo"
 )
@@ -44,6 +45,6 @@ func init() {
     fromCmd.Flags().StringP("file", "f", "", "file to save log")
     // flag -n present
     fromCmd.Flags().StringP("repo", "r", "", "repository path")
-    fromCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
+    fromCmd.Flags().BoolP("no-scopes", "n", config.Config.IncludeScopes, "exclude scopes")
     fromCmd.Flags().StringP("to", "t", "", "create log from tag to tag")
 }

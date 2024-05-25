@@ -5,6 +5,7 @@ import (
     "os"
 
     "github.com/spf13/cobra"
+    "lightConventionalLog/internal/config"
     "lightConventionalLog/internal/formatter"
     "lightConventionalLog/internal/repo"
 )
@@ -54,5 +55,5 @@ func init() {
     rootCmd.AddCommand(fullCmd)
     fullCmd.Flags().StringP("one-file", "o", "", "create one file with all logs")
     fromCmd.Flags().StringP("repo", "r", "", "repository path")
-    fullCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
+    fullCmd.Flags().BoolP("no-scopes", "n", config.Config.IncludeScopes, "exclude scopes")
 }

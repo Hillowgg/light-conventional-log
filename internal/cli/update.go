@@ -26,6 +26,10 @@ var updateCmd = &cobra.Command{
         if config.Config.Interactive {
             interactive = !interactive
         }
+        date, _ := cmd.Flags().GetBool("date")
+        if config.Config.Dates {
+            date = !date
+        }
         cfg := repo.Update{}
         cfg.IncludeScopes = !ns
         cfg.Dir, _ = cmd.Flags().GetString("repo")
@@ -43,13 +47,18 @@ var updateCmd = &cobra.Command{
             log = string(log_)
             err := os.Remove(".tmp-lcl.md")
             if err != nil {
-                return
+                panic(err)
             }
         }
 
         if fileName != "" {
             file, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-            _, err = file.WriteString("\n# " + tag + "\n")
+            if date {
+                _, err = file.WriteString("\n# " + tag.Tag + " " + tag.Date + "\n")
+            } else {
+
+                _, err = file.WriteString("\n# " + tag.Tag + "\n")
+            }
             _, err = file.WriteString(log)
             if err != nil {
                 panic(err)
@@ -64,6 +73,7 @@ var updateCmd = &cobra.Command{
 func init() {
     rootCmd.AddCommand(updateCmd)
 
+    updateCmd.Flags().BoolP("date", "d", false, "show date")
     updateCmd.Flags().StringP("repo", "r", "", "repository path")
     updateCmd.Flags().StringP("file", "f", "", "file to save log")
     updateCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")

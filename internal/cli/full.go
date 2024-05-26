@@ -21,6 +21,12 @@ var fullCmd = &cobra.Command{
         if config.Config.IncludeScopes {
             cfg.IncludeScopes = !cfg.IncludeScopes
         }
+
+        date, _ := cmd.Flags().GetBool("date")
+        if config.Config.Dates {
+            date = !date
+        }
+        cfg.TagDate = date
         cfg.Dir, _ = cmd.Flags().GetString("repo")
         logs := formatter.CreateFullChangeLog(cfg)
         one, _ := cmd.Flags().GetString("one-file")
@@ -30,7 +36,12 @@ var fullCmd = &cobra.Command{
                 panic(err)
             }
             for tag, log := range logs {
-                _, err = file.WriteString("# " + tag.Tag + "\n")
+                if date {
+                    _, err = file.WriteString("# " + tag.Tag + " " + tag.Date + "\n")
+                } else {
+                    _, err = file.WriteString("# " + tag.Tag + "\n")
+                }
+
                 _, err = file.WriteString(log)
                 if err != nil {
                     panic(err)

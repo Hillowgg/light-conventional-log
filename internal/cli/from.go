@@ -17,7 +17,15 @@ var fromCmd = &cobra.Command{
     PreRunE: checkGit,
     Run: func(cmd *cobra.Command, args []string) {
         ns, _ := cmd.Flags().GetBool("no-scopes")
+        if config.Config.IncludeScopes {
+            ns = !ns
+        }
+        // date, _ := cmd.Flags().GetBool("date")
+        // if config.Config.Dates {
+        //     date = !date
+        // }
         cfg := repo.From{}
+        // cfg.TagDate = date
         cfg.From = args[0]
         cfg.IncludeScopes = !ns
         if config.Config.IncludeScopes {
@@ -47,6 +55,8 @@ func init() {
     rootCmd.AddCommand(fromCmd)
     fromCmd.Flags().StringP("file", "f", "", "file to save log")
     // flag -n present
+
+    // fromCmd.Flags().BoolP("date", "d", false, "show date")
     fromCmd.Flags().StringP("repo", "r", "", "repository path")
     fromCmd.Flags().BoolP("no-scopes", "n", false, "exclude scopes")
     fromCmd.Flags().StringP("to", "t", "", "create log from tag to tag")

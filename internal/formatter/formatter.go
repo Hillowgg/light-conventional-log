@@ -87,10 +87,10 @@ func CreateChangeLogFrom(cfg From) string {
     return ParseCommitsWithoutScopes(commitsText)
 }
 
-func LastChangeLog(cfg repo.Update) (string, string) {
+func LastChangeLog(cfg repo.Update) (string, git.Tag) {
     tags := git.GetTags(repo.Tags{Dir: cfg.GetDir()})
     c := repo.From{}
     c.Dir = cfg.GetDir()
     c.IncludeScopes = cfg.IncludeScopes
-    return CreateChangeLogFrom(c), tags[0].Tag
+    return CreateChangeLogFrom(c), tags[0]
 }

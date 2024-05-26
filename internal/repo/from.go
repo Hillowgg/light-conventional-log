@@ -2,9 +2,10 @@ package repo
 
 type From struct {
     Common
-    From string
-    To   string
-    Dir  string
+    TagDate bool
+    From    string
+    To      string
+    Dir     string
 }
 
 func (c From) GetFrom() string {
@@ -13,4 +14,8 @@ func (c From) GetFrom() string {
 
 func (f From) GetTo() string {
     return f.To
+}
+
+func (f From) GetTagDate() bool {
+    return f.TagDate
 }
